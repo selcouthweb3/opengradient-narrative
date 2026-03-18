@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OpenGradient Narrative — Verifiable AI Prediction Market</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #070a0e;
+      --surface: #0d1117;
+      --surface2: #131920;
+      --border: #1a2232;
+      --border-hi: #243044;
+      --accent: #00e5ff;
+      --accent2: #7c3aed;
+      --green: #00ff94;
+      --red: #ff4560;
+      --yellow: #fbbf24;
+      --text: #e2e8f0;
+      --muted: #4a5568;
+      --mono: 'Space Mono', monospace;
+      --ui: 'Cabinet Grotesk', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ui);
+      min-height: 100vh;
+    }
+
+    /* Grid bg */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Purple glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -300px; right: -300px;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .z1 { position: relative; z-index: 1; }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(7,10,14,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-hex {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: 11px; font-weight: 700; color: #000;
+    }
+
+    .logo-name {
+      font-size: 16px; font-weight: 800; letter-spacing: -0.3px;
+    }
+
+    .logo-tag {
+      font-family: var(--mono); font-size: 10px; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+
+    .net-pill {
+      font-family: var(--mono); font-size: 10px;
+      border: 1px solid var(--border-hi);
+      padding: 4px 10px; color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .pulse-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: glow 2s infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .wallet-btn {
+      font-family: var(--mono); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .wallet-btn:hover, .wallet-btn.connected {
+      background: rgba(0,229,255,0.08);
+    }
+
+    .wallet-btn.connected { color: var(--green); border-color: var(--green); }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 64px 24px 48px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono); font-size: 11px;
+      color: var(--accent); letter-spacing: 0.15em;
+      text-transform: uppercase; margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: ''; flex: 1; max-width: 40px;
+      height: 1px; background: var(--accent); opacity: 0.4;
+    }
+
+    h1 {
+      font-size: clamp(32px, 6vw, 56px);
+      font-weight: 800; letter-spacing: -1.5px;
+      line-height: 1.05; margin-bottom: 16px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .hero-sub {
+      font-family: var(--mono); font-size: 13px;
+      color: var(--muted); line-height: 1.7; margin-bottom: 36px;
+    }
+
+    .create-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent2);
+      border: none; color: #fff;
+      font-family: var(--mono); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 14px 28px; cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .create-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .create-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex; gap: 1px;
+      border: 1px solid var(--border);
+      border-left: none; border-right: none;
+      margin: 0 0 40px;
+      overflow: hidden;
+    }
+
+    .stat {
+      flex: 1; padding: 16px 24px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+    }
+
+    .stat-label {
+      font-family: var(--mono); font-size: 10px;
+      color: var(--muted); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+
+    .stat-val {
+      font-family: var(--mono); font-size: 20px;
+      font-weight: 700; color: var(--accent);
+    }
+
+    /* ── LAYOUT ── */
+    .wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-head {
+      font-family: var(--mono); font-size: 11px;
+      color: var(--muted); letter-spacing: 0.12em;
+      text-transform: uppercase; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .section-head::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* ── PREDICTION CARDS ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .card:hover { border-color: var(--border-hi); transform: translateY(-2px); }
+    .card:hover::before { opacity: 1; }
+
+    .card-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .cat-tag {
+      font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 8px; border: 1px solid var(--border-hi);
+      color: var(--muted); flex-shrink: 0;
+    }
+
+    .status-tag {
+      font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 3px 8px; flex-shrink: 0;
+    }
+
+    .status-tag.open { color: var(--green); border: 1px solid rgba(0,255,148,0.3); }
+    .status-tag.resolved { color: var(--yellow); border: 1px solid rgba(251,191,36,0.3); }
+    .status-tag.closed { color: var(--muted); border: 1px solid var(--border); }
+
+    .card-title {
+      font-size: 15px; font-weight: 700;
+      line-height: 1.4; margin-bottom: 12px;
+    }
+
+    /* Probability bar */
+    .prob-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .prob-bar-wrap {
+      flex: 1; height: 4px;
+      background: var(--border); overflow: hidden;
+    }
+
+    .prob-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      transition: width 0.6s ease;
+    }
+
+    .prob-pct {
+      font-family: var(--mono); font-size: 13px;
+      font-weight: 700; color: var(--accent);
+      flex-shrink: 0; min-width: 36px; text-align: right;
+    }
+
+    .prob-label {
+      font-family: var(--mono); font-size: 9px;
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    /* Vote counts */
+    .vote-row {
+      display: flex; gap: 8px; margin-bottom: 14px;
+    }
+
+    .vote-pill {
+      flex: 1; padding: 6px 10px;
+      font-family: var(--mono); font-size: 11px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      border: 1px solid;
+    }
+
+    .vote-pill.agree { border-color: rgba(0,255,148,0.25); color: var(--green); background: rgba(0,255,148,0.04); }
+    .vote-pill.disagree { border-color: rgba(255,69,96,0.25); color: var(--red); background: rgba(255,69,96,0.04); }
+
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: var(--mono); font-size: 10px; color: var(--muted);
+    }
+
+    .creator-addr { color: var(--accent); opacity: 0.7; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(7,10,14,0.92);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      width: 100%; max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 32px;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; color: var(--muted);
+      font-size: 20px; cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover { color: var(--text); }
+
+    .modal-title {
+      font-size: 20px; font-weight: 800;
+      letter-spacing: -0.3px; margin-bottom: 24px;
+    }
+
+    .field { margin-bottom: 18px; }
+
+    .field label {
+      display: block;
+      font-family: var(--mono); font-size: 10px;
+      color: var(--muted); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+
+    .field input, .field textarea, .field select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--ui); font-size: 14px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); }
+    .field select option { background: var(--bg); }
+
+    .modal-submit {
+      width: 100%;
+      background: var(--accent2); border: none;
+      color: #fff; font-family: var(--mono);
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 14px; cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+
+    .modal-submit:hover { opacity: 0.9; }
+    .modal-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── DETAIL MODAL ── */
+    .detail-section { margin-bottom: 20px; }
+
+    .narrative-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px;
+      font-size: 14px; line-height: 1.6;
+      color: var(--text); margin-bottom: 12px;
+    }
+
+    .cases-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .case-box {
+      background: var(--bg); border: 1px solid var(--border);
+      padding: 12px 14px;
+    }
+
+    .case-label {
+      font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .case-label.bull { color: var(--green); }
+    .case-label.bear { color: var(--red); }
+    .case-text { font-size: 13px; line-height: 1.5; color: var(--muted); }
+
+    .receipt-row {
+      display: flex; justify-content: space-between;
+      align-items: center; padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono); font-size: 11px;
+    }
+
+    .receipt-row:last-child { border-bottom: none; }
+    .rk { color: var(--muted); }
+    .rv { color: var(--text); word-break: break-all; text-align: right; max-width: 55%; }
+    .rv.hash { color: var(--accent); }
+
+    .vote-btns {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin: 16px 0;
+    }
+
+    .vote-action {
+      padding: 12px; border: 1px solid;
+      font-family: var(--mono); font-size: 12px;
+      font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; cursor: pointer;
+      background: transparent; transition: all 0.2s;
+    }
+
+    .vote-action.agree { border-color: rgba(0,255,148,0.4); color: var(--green); }
+    .vote-action.agree:hover { background: rgba(0,255,148,0.08); }
+    .vote-action.disagree { border-color: rgba(255,69,96,0.4); color: var(--red); }
+    .vote-action.disagree:hover { background: rgba(255,69,96,0.08); }
+    .vote-action:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .resolve-btn {
+      width: 100%; padding: 12px;
+      background: rgba(251,191,36,0.08);
+      border: 1px solid rgba(251,191,36,0.4);
+      color: var(--yellow);
+      font-family: var(--mono); font-size: 12px;
+      font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .resolve-btn:hover { background: rgba(251,191,36,0.15); }
+    .resolve-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .verdict-box {
+      background: rgba(251,191,36,0.05);
+      border: 1px solid rgba(251,191,36,0.3);
+      border-left: 3px solid var(--yellow);
+      padding: 14px 16px;
+      font-size: 14px; line-height: 1.6; color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    /* Error / Toast */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      font-family: var(--mono); font-size: 12px;
+      padding: 12px 20px; z-index: 300;
+      display: none; white-space: nowrap;
+    }
+
+    .toast.show { display: block; }
+    .toast.error { border-color: rgba(255,69,96,0.5); color: var(--red); }
+    .toast.success { border-color: rgba(0,255,148,0.5); color: var(--green); }
+
+    /* Spinner */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-feed {
+      text-align: center; padding: 64px 24px;
+      font-family: var(--mono); color: var(--muted); font-size: 13px;
+    }
+
+    .loading-card {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 40px; text-align: center;
+      font-family: var(--mono); font-size: 12px; color: var(--muted);
+      grid-column: 1 / -1;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 24px;
+      text-align: center;
+      font-family: var(--mono); font-size: 11px; color: var(--muted);
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .cases-row { grid-template-columns: 1fr; }
+      .stats-bar { flex-direction: column; gap: 0; }
+      h1 { letter-spacing: -0.5px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="z1">
+  <div class="logo">
+    <div class="logo-hex">OG</div>
+    <div>
+      <div class="logo-name">Narrative</div>
+      <div class="logo-tag">Verifiable AI Prediction Market</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="net-pill"><div class="pulse-dot"></div>OpenGradient</div>
+    <button class="wallet-btn" id="walletBtn" onclick="connectWallet()">Connect Wallet</button>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<div class="z1">
+  <div class="hero">
+    <div class="hero-eyebrow">TEE-Verified · On-Chain Proof · Wallet Identity</div>
+    <h1>Predictions with<br/><span>verifiable AI.</span></h1>
+    <p class="hero-sub">
+      Every AI analysis runs inside a Trusted Execution Environment.<br/>
+      Every prediction has a cryptographic receipt. Your wallet is your identity.
+    </p>
+    <button class="create-btn" id="heroCreateBtn" onclick="openCreate()">
+      + Make a Prediction
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar wrap">
+    <div class="stat">
+      <div class="stat-label">Total Predictions</div>
+      <div class="stat-val" id="statTotal">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Open Markets</div>
+      <div class="stat-val" id="statOpen">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Resolved</div>
+      <div class="stat-val" id="statResolved">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">On-Chain Proofs</div>
+      <div class="stat-val" id="statProofs">—</div>
+    </div>
+  </div>
+
+  <!-- Feed -->
+  <div class="wrap">
+    <div class="section-head">Live Markets</div>
+    <div class="cards-grid" id="cardsGrid">
+      <div class="loading-card">
+        <div class="spinner" style="margin:0 auto 12px"></div>
+        Loading predictions...
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CREATE MODAL ── -->
+<div class="modal-overlay" id="createModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeCreate()">✕</button>
+    <div class="modal-title">Make a Prediction</div>
+
+    <div class="field">
+      <label>Prediction *</label>
+      <input id="predTitle" type="text" placeholder="e.g. Bitcoin hits $150k before end of 2025"/>
+    </div>
+    <div class="field">
+      <label>Context (optional)</label>
+      <textarea id="predDesc" placeholder="Add more detail to help the AI analyze this accurately..."></textarea>
+    </div>
+    <div class="field">
+      <label>Category</label>
+      <select id="predCat">
+        <option value="crypto">Crypto</option>
+        <option value="sports">Sports</option>
+        <option value="politics">Politics</option>
+        <option value="tech">Tech</option>
+        <option value="entertainment">Entertainment</option>
+        <option value="science">Science</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Deadline *</label>
+      <input id="predDeadline" type="datetime-local"/>
+    </div>
+
+    <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.6">
+      The AI will immediately analyze your prediction using a TEE-verified LLM on OpenGradient.<br/>
+      A cryptographic proof will be settled on-chain.
+    </div>
+
+    <button class="modal-submit" id="createSubmitBtn" onclick="submitPrediction()">
+      Submit &amp; Get AI Analysis →
+    </button>
+  </div>
+</div>
+
+<!-- ── DETAIL MODAL ── -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal" style="max-width:620px">
+    <button class="modal-close" onclick="closeDetail()">✕</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<footer class="z1">
+  Powered by <a href="https://opengradient.ai" target="_blank">OpenGradient</a> ·
+  TEE-Verified AI ·
+  <a href="https://explorer.opengradient.ai" target="_blank">Block Explorer</a> ·
+  <a href="https://faucet.opengradient.ai" target="_blank">Get $OPG</a>
+</footer>
+
+<script>
+  const API = 'http://localhost:8000';
+  let walletAddress = null;
+  let allPredictions = [];
+
+  // ── WALLET ──
+  async function connectWallet() {
+    if (typeof window.ethereum === 'undefined') {
+      showToast('MetaMask not found. Install MetaMask to continue.', 'error');
+      return;
+    }
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      walletAddress = accounts[0];
+      const btn = document.getElementById('walletBtn');
+      btn.textContent = walletAddress.slice(0,6) + '...' + walletAddress.slice(-4);
+      btn.classList.add('connected');
+      showToast('Wallet connected', 'success');
+    } catch (e) {
+      showToast('Connection rejected', 'error');
+    }
+  }
+
+  if (window.ethereum) {
+    window.ethereum.on('accountsChanged', (accounts) => {
+      walletAddress = accounts[0] || null;
+      const btn = document.getElementById('walletBtn');
+      if (walletAddress) {
+        btn.textContent = walletAddress.slice(0,6) + '...' + walletAddress.slice(-4);
+        btn.classList.add('connected');
+      } else {
+        btn.textContent = 'Connect Wallet';
+        btn.classList.remove('connected');
+      }
+    });
+  }
+
+  // ── LOAD PREDICTIONS ──
+  async function loadPredictions() {
+    try {
+      const res = await fetch(`${API}/predictions`);
+      const data = await res.json();
+      allPredictions = data.predictions || [];
+      renderCards(allPredictions);
+      updateStats(allPredictions);
+    } catch (e) {
+      document.getElementById('cardsGrid').innerHTML =
+        '<div class="loading-card" style="color:var(--red)">Could not reach backend. Is it running on port 8000?</div>';
+    }
+  }
+
+  function updateStats(preds) {
+    const open = preds.filter(p => p.status === 'open').length;
+    const resolved = preds.filter(p => p.status === 'resolved').length;
+    const proofs = preds.filter(p => p.analysis?.payment_hash).length;
+    document.getElementById('statTotal').textContent = preds.length;
+    document.getElementById('statOpen').textContent = open;
+    document.getElementById('statResolved').textContent = resolved;
+    document.getElementById('statProofs').textContent = proofs;
+  }
+
+  function renderCards(preds) {
+    const grid = document.getElementById('cardsGrid');
+    if (preds.length === 0) {
+      grid.innerHTML = '<div class="empty-feed">No predictions yet. Be the first to make one.</div>';
+      return;
+    }
+    grid.innerHTML = preds.map(p => cardHTML(p)).join('');
+  }
+
+  function cardHTML(p) {
+    const prob = p.analysis?.probability ?? null;
+    const agreeCount = p.votes_agree?.length || 0;
+    const disagreeCount = p.votes_disagree?.length || 0;
+    const deadline = new Date(p.deadline).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    const creator = p.creator ? p.creator.slice(0,6)+'...'+p.creator.slice(-4) : '—';
+
+    return `
+      <div class="card" onclick="openDetail('${p.id}')">
+        <div class="card-top">
+          <span class="cat-tag">${p.category}</span>
+          <span class="status-tag ${p.status}">${p.status}</span>
+        </div>
+        <div class="card-title">${esc(p.title)}</div>
+        ${prob !== null ? `
+          <div class="prob-label" style="margin-bottom:6px">AI Probability</div>
+          <div class="prob-row">
+            <div class="prob-bar-wrap">
+              <div class="prob-bar-fill" style="width:${prob}%"></div>
+            </div>
+            <span class="prob-pct">${prob}%</span>
+          </div>
+        ` : '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:14px">Analyzing...</div>'}
+        <div class="vote-row">
+          <div class="vote-pill agree">✓ ${agreeCount} agree</div>
+          <div class="vote-pill disagree">✗ ${disagreeCount} disagree</div>
+        </div>
+        <div class="card-footer">
+          <span>Closes ${deadline}</span>
+          <span class="creator-addr">${creator}</span>
+        </div>
+      </div>`;
+  }
+
+  // ── CREATE ──
+  function openCreate() {
+    if (!walletAddress) {
+      showToast('Connect your wallet first', 'error');
+      return;
+    }
+    // Set min deadline to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('predDeadline').min = tomorrow.toISOString().slice(0,16);
+    document.getElementById('createModal').classList.add('open');
+  }
+
+  function closeCreate() {
+    document.getElementById('createModal').classList.remove('open');
+  }
+
+  async function submitPrediction() {
+    const title = document.getElementById('predTitle').value.trim();
+    const desc = document.getElementById('predDesc').value.trim();
+    const cat = document.getElementById('predCat').value;
+    const deadline = document.getElementById('predDeadline').value;
+
+    if (!title || title.length < 10) { showToast('Prediction must be at least 10 characters', 'error'); return; }
+    if (!deadline) { showToast('Set a deadline', 'error'); return; }
+
+    const btn = document.getElementById('createSubmitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="display:inline-block;margin-right:8px"></div>Analyzing with TEE LLM...';
+
+    try {
+      const res = await fetch(`${API}/predictions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title, description: desc || null,
+          category: cat,
+          deadline: new Date(deadline).toISOString(),
+          wallet_address: walletAddress,
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'Failed');
+      }
+
+      const data = await res.json();
+      closeCreate();
+      showToast('Prediction created! AI analysis on-chain ✓', 'success');
+      await loadPredictions();
+      openDetail(data.id);
+    } catch (e) {
+      showToast('Error: ' + e.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Submit &amp; Get AI Analysis →';
+    }
+  }
+
+  // ── DETAIL ──
+  async function openDetail(id) {
+    document.getElementById('detailModal').classList.add('open');
+    document.getElementById('detailContent').innerHTML =
+      '<div style="text-align:center;padding:40px"><div class="spinner" style="margin:0 auto 12px"></div><div style="font-family:var(--mono);font-size:12px;color:var(--muted)">Loading...</div></div>';
+
+    try {
+      const res = await fetch(`${API}/predictions/${id}`);
+      const p = await res.json();
+      renderDetail(p);
+    } catch (e) {
+      document.getElementById('detailContent').innerHTML =
+        '<div style="color:var(--red);font-family:var(--mono);font-size:13px">Failed to load prediction.</div>';
+    }
+  }
+
+  function renderDetail(p) {
+    const agreeCount = p.votes_agree?.length || 0;
+    const disagreeCount = p.votes_disagree?.length || 0;
+    const total = agreeCount + disagreeCount;
+    const deadline = new Date(p.deadline).toLocaleString();
+    const createdAt = new Date(p.created_at).toLocaleString();
+    const isCreator = walletAddress && p.creator === walletAddress.toLowerCase();
+    const hasVoted = walletAddress && (
+      p.votes_agree?.includes(walletAddress.toLowerCase()) ||
+      p.votes_disagree?.includes(walletAddress.toLowerCase())
+    );
+    const deadlinePassed = new Date() > new Date(p.deadline);
+
+    let html = `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+        <span class="cat-tag">${p.category}</span>
+        <span class="status-tag ${p.status}">${p.status}</span>
+      </div>
+      <div style="font-size:20px;font-weight:800;letter-spacing:-0.3px;line-height:1.3;margin-bottom:20px">${esc(p.title)}</div>
+    `;
+
+    // AI Analysis
+    if (p.analysis) {
+      html += `
+        <div class="detail-section">
+          <div class="section-head">AI Analysis</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div style="font-family:var(--mono);font-size:32px;font-weight:700;color:var(--accent)">${p.analysis.probability}%</div>
+            <div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Probability</div>
+              <div class="prob-bar-wrap" style="width:160px;margin-top:6px">
+                <div class="prob-bar-fill" style="width:${p.analysis.probability}%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="narrative-box">${esc(p.analysis.narrative)}</div>
+          <div class="cases-row">
+            <div class="case-box">
+              <div class="case-label bull">Bull Case</div>
+              <div class="case-text">${esc(p.analysis.bull_case)}</div>
+            </div>
+            <div class="case-box">
+              <div class="case-label bear">Bear Case</div>
+              <div class="case-text">${esc(p.analysis.bear_case)}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Verdict
+    if (p.verdict) {
+      html += `
+        <div class="detail-section">
+          <div class="section-head">Final Verdict</div>
+          <div class="verdict-box">${esc(p.verdict)}</div>
+          <div class="receipt-row">
+            <span class="rk">verdict_hash</span>
+            <span class="rv hash">${p.verdict_payment_hash || '—'}</span>
+          </div>
+          <div style="margin-top:8px">
+            <a href="${p.verdict_explorer_url}" target="_blank"
+               style="font-family:var(--mono);font-size:11px;color:var(--accent)">
+              View verdict on explorer ↗
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    // Community votes
+    html += `
+      <div class="detail-section">
+        <div class="section-head">Community (${total} votes)</div>
+        <div class="vote-row">
+          <div class="vote-pill agree" style="font-size:13px">✓ ${agreeCount} agree</div>
+          <div class="vote-pill disagree" style="font-size:13px">✗ ${disagreeCount} disagree</div>
+        </div>
+    `;
+
+    if (p.status === 'open' && !deadlinePassed && walletAddress) {
+      html += `
+        <div class="vote-btns">
+          <button class="vote-action agree" onclick="castVote('${p.id}','agree')" ${hasVoted ? '' : ''}>
+            ✓ Agree
+          </button>
+          <button class="vote-action disagree" onclick="castVote('${p.id}','disagree')">
+            ✗ Disagree
+          </button>
+        </div>
+      `;
+    } else if (!walletAddress) {
+      html += `<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px">Connect wallet to vote</div>`;
+    }
+
+    html += `</div>`;
+
+    // Resolve button (creator only, after deadline)
+    if (isCreator && p.status === 'open' && deadlinePassed) {
+      html += `
+        <button class="resolve-btn" id="resolveBtn" onclick="resolveMarket('${p.id}')">
+          ⚡ Resolve Market &amp; Get Final Verdict
+        </button>
+      `;
+    }
+
+    // On-chain receipt
+    if (p.analysis) {
+      html += `
+        <div class="detail-section" style="margin-top:20px">
+          <div class="section-head">On-Chain Receipt</div>
+          <div class="receipt-row">
+            <span class="rk">payment_hash</span>
+            <span class="rv hash">${p.analysis.payment_hash}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="rk">settlement</span>
+            <span class="rv">INDIVIDUAL_FULL</span>
+          </div>
+          <div class="receipt-row">
+            <span class="rk">creator</span>
+            <span class="rv">${p.creator?.slice(0,10)}...${p.creator?.slice(-6)}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="rk">deadline</span>
+            <span class="rv">${deadline}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="rk">created</span>
+            <span class="rv">${createdAt}</span>
+          </div>
+          <div style="margin-top:12px">
+            <a href="${p.analysis.explorer_url}" target="_blank"
+               style="font-family:var(--mono);font-size:11px;color:var(--accent)">
+              View analysis proof on explorer ↗
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    document.getElementById('detailContent').innerHTML = html;
+  }
+
+  function closeDetail() {
+    document.getElementById('detailModal').classList.remove('open');
+  }
+
+  // ── VOTE ──
+  async function castVote(id, vote) {
+    if (!walletAddress) { showToast('Connect wallet to vote', 'error'); return; }
+    try {
+      const res = await fetch(`${API}/predictions/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prediction_id: id, wallet_address: walletAddress, vote })
+      });
+      if (!res.ok) throw new Error((await res.json()).detail);
+      showToast('Vote recorded ✓', 'success');
+      await loadPredictions();
+      openDetail(id);
+    } catch (e) {
+      showToast('Vote failed: ' + e.message, 'error');
+    }
+  }
+
+  // ── RESOLVE ──
+  async function resolveMarket(id) {
+    if (!walletAddress) return;
+    const btn = document.getElementById('resolveBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="display:inline-block;margin-right:8px"></div>Getting TEE verdict...';
+
+    try {
+      const res = await fetch(`${API}/predictions/resolve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prediction_id: id, wallet_address: walletAddress })
+      });
+      if (!res.ok) throw new Error((await res.json()).detail);
+      showToast('Market resolved! Verdict on-chain ✓', 'success');
+      await loadPredictions();
+      openDetail(id);
+    } catch (e) {
+      showToast('Resolve failed: ' + e.message, 'error');
+      btn.disabled = false;
+      btn.textContent = '⚡ Resolve Market & Get Final Verdict';
+    }
+  }
+
+  // ── HELPERS ──
+  function esc(str) {
+    return String(str || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  let toastTimer;
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast show ${type}`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // Close modals on overlay click
+  document.getElementById('createModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeCreate();
+  });
+  document.getElementById('detailModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeDetail();
+  });
+
+  // Init
+  loadPredictions();
+  setInterval(loadPredictions, 30000); // refresh every 30s
+</script>
+</body>
+</html>

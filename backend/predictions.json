@@ -1,0 +1,74 @@
+{
+  "predictions": {
+    "82f9a2cb": {
+      "id": "82f9a2cb",
+      "title": "Bitcoin to hit 75000",
+      "description": null,
+      "category": "crypto",
+      "deadline": "2026-03-20T09:15:00.000Z",
+      "creator": "0x5028c719d4bdc63da6028259ec6cc440b8c1ac78",
+      "created_at": "2026-03-18T23:34:38.543834+00:00",
+      "analysis": null,
+      "votes_agree": [
+        "0x5028c719d4bdc63da6028259ec6cc440b8c1ac78"
+      ],
+      "votes_disagree": [],
+      "status": "open",
+      "verdict": null,
+      "verdict_payment_hash": null,
+      "verdict_explorer_url": null
+    },
+    "d8f01fed": {
+      "id": "d8f01fed",
+      "title": "Ethereum flips Bitcoin in market cap by end of 2026",
+      "description": null,
+      "category": "crypto",
+      "deadline": "2026-03-20T09:15:00.000Z",
+      "creator": "0x5028c719d4bdc63da6028259ec6cc440b8c1ac78",
+      "created_at": "2026-03-18T23:35:42.882226+00:00",
+      "analysis": null,
+      "votes_agree": [
+        "0x5028c719d4bdc63da6028259ec6cc440b8c1ac78"
+      ],
+      "votes_disagree": [],
+      "status": "open",
+      "verdict": null,
+      "verdict_payment_hash": null,
+      "verdict_explorer_url": null
+    },
+    "50de5d0e": {
+      "id": "50de5d0e",
+      "title": "Ethereum flips Bitcoin in market cap by end of 2026",
+      "description": "Ethereum flips Bitcoin in market cap by end of 2026",
+      "category": "crypto",
+      "deadline": "2026-03-20T09:15:00.000Z",
+      "creator": "0x5028c719d4bdc63da6028259ec6cc440b8c1ac78",
+      "created_at": "2026-03-18T23:36:07.122662+00:00",
+      "analysis": null,
+      "votes_agree": [
+        "0x5028c719d4bdc63da6028259ec6cc440b8c1ac78"
+      ],
+      "votes_disagree": [],
+      "status": "open",
+      "verdict": null,
+      "verdict_payment_hash": null,
+      "verdict_explorer_url": null
+    },
+    "330c86a3": {
+      "id": "330c86a3",
+      "title": "Ethereum flips Bitcoin in market cap by end of 2026",
+      "description": "Ethereum flips Bitcoin in market cap by end of 2026",
+      "category": "crypto",
+      "deadline": "2026-03-20T09:15:00.000Z",
+      "creator": "0x5028c719d4bdc63da6028259ec6cc440b8c1ac78",
+      "created_at": "2026-03-18T23:36:20.706140+00:00",
+      "analysis": null,
+      "votes_agree": [],
+      "votes_disagree": [],
+      "status": "open",
+      "verdict": null,
+      "verdict_payment_hash": null,
+      "verdict_explorer_url": null
+    }
+  }
+}
