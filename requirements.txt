@@ -1,9 +1,3 @@
-cd ~/opengradient-narrative
-nano requirements.txt
-```
-
-Paste this inside:
-```
 fastapi
 uvicorn
 opengradient>=0.8.0
